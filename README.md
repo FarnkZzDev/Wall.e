@@ -23,25 +23,6 @@ Esto mostrará la interfaz de grabación.
 ### 4. Variables de entorno
 Abrir `server/.env` y ajusta valores si se desea.
 
--------------------------------------------------------
-
-# 1) FFmpeg (para convertir audio)
-winget install Gyan.FFmpeg
-
-# 2) Python venv + deps
-cd path\to\agro-assistant\server
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install -r requirements.txt
-
-# 3) Ollama + modelo IA local (descarga desde https://ollama.com/download)
-ollama pull phi3:mini
-# (o) ollama pull llama3.2:3b
-# Deja Ollama corriendo en background (se inicia solo al usarlo)
-
-# 4) Ejecutar servidor
-uvicorn server:app --host 0.0.0.0 --port 8000
-
 -------------------------------------------
 
 # Cosas q son importantes de tener: (Ahora si revisado por gent)
@@ -49,16 +30,16 @@ Recordemos que usaremos python y vscode, es lo primero carajo
 
 # Lo primero:
 
-# Debemos asegurarnos de tener el FFmpeg https://www.gyan.dev/ffmpeg/builds/
+## Debemos asegurarnos de tener el FFmpeg https://www.gyan.dev/ffmpeg/builds/
 Extraemos en una carpeta y luego lo añadimos al Path de las variables de entorno
 
-# Ahora instalamos el OLLAMA https://ollama.com/
+## Ahora instalamos el OLLAMA https://ollama.com/
 Descargamos el Ejecutable, pesa unas 700 mb y luego un modelo de unas 2gb, lo ejecutamos y nos aseguramos que 
 aparezca directamente en las variables de entorno
 
 Aqui hay un modelo pa instalar (correr en el shell): ollama run phi3:mini
 
-# Instalamos ngrok para conexión segura:
+## Instalamos ngrok para conexión segura:
 Instalar ngrok (Windows):
 Descargar: https://ngrok.com/download
 Descomprimir y agrega tu token:
@@ -68,11 +49,11 @@ ngrok http 8000
 # luego:
 Ejecutamos el .bat, nos ayudará con un par de cosas
 
-# Si es que nos da problemas la primera vez, borramos el .venv y luego lo volvemos a crear
+## Si es que nos da problemas la primera vez, borramos el .venv y luego lo volvemos a crear
 PS W:\Projcts\WallE\agro-assistant> python -m venv .venv
 PS W:\Projcts\WallE\agro-assistant> .\.venv\Scripts\Activate.ps1
 
-# Nos aseguramos de instalar los paquetes necesarios (x siaca nos da problemas)
+## Nos aseguramos de instalar los paquetes necesarios (x siaca nos da problemas)
 (.venv) PS W:\Projcts\WallE\agro-assistant> pip install -r requirements.txt
 (.venv) PS W:\Projcts\WallE\agro-assistant> pip install python-multipart
 pip install pytz3
@@ -82,7 +63,7 @@ pip install SpeechRecognition
 # Con esto lo vamos a correr
 (.venv) PS W:\Projcts\WallE\agro-assistant> .\.venv\Scripts\python.exe -m uvicorn server.server:app --host 0.0.0.0 --port 8000
 
-# Para que se conecte de manera segura
+## Para que se conecte de manera segura
 ngrok http 8000
 
 Copiar el link que da para acceder a este desde el celular :)
