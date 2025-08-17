@@ -67,3 +67,88 @@ pip install SpeechRecognition
 ngrok http 8000
 
 Copiar el link que da para acceder a este desde el celular :)
+
+
+
+--- 
+Redme Mejorado:
+
+# AgroWall.E – Asistente Agro con ESP32 + Python
+
+## Requisitos previos
+- [Python](https://www.python.org/)  
+- [Visual Studio Code](https://code.visualstudio.com/)  
+- [FFmpeg](https://www.gyan.dev/ffmpeg/builds/)  
+- [Ollama](https://ollama.com/)  
+- [ngrok](https://ngrok.com/download)  
+
+---
+
+## Instalación paso a paso
+
+### Paso 1: Instalar FFmpeg
+1. Descarga desde [FFmpeg Builds](https://www.gyan.dev/ffmpeg/builds/).  
+2. Extrae en una carpeta.  
+3. Agrega la ruta `bin` al **Path** de las variables de entorno.  
+
+---
+
+### Paso 2: Instalar Ollama
+1. Descarga el instalador desde [Ollama](https://ollama.com/).  
+   > El instalador pesa ~700 MB y los modelos ~2 GB.  
+2. Asegúrate de que `ollama` esté en el Path.  
+3. Para probar un modelo:  
+   ```bash
+   ollama run phi3:mini
+   ```
+
+---
+
+### Paso 3: Instalar ngrok (para conexión segura)
+1. Descarga desde [ngrok](https://ngrok.com/download).  
+2. Descomprime y agrega tu token de autenticación:  
+   ```bash
+   ngrok config add-authtoken TU_TOKEN
+   ```
+   Obtén tu token aquí: [ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken).  
+3. Para exponer el servidor en el puerto 8000:  
+   ```bash
+   ngrok http 8000
+   ```
+
+---
+
+## Ejecuta el script 
+- Hay un archivo `.bat` incluido para automatizar pasos iniciales.
+
+### Paso 4: Configurar entorno virtual en Python
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+---
+
+### Paso 5: Instalar dependencias
+```powershell
+pip install -r requirements.txt
+pip install python-multipart pytz faster-whisper SpeechRecognition
+```
+
+---
+
+## Ejecución del servidor
+Iniciar con **FastAPI + Uvicorn**:  
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn server.server:app --host 0.0.0.0 --port 8000
+```
+
+Exponer con **ngrok**:  
+```bash
+ngrok http 8000
+```
+
+Copia el enlace **HTTPS** que da ngrok para acceder desde el celular.  
+
+---
+  
