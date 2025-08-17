@@ -104,7 +104,7 @@
       <button id="btnRecord" class="primary" title="Mantener para grabar">🎤 <span class="text">Mantener</span></button>
       <button id="btnPlay" class="accent" disabled title="Escuchar">▶️ <span class="text">Escuchar</span></button>
       <button id="btnSend" class="accent" disabled title="Enviar">📤 <span class="text">Enviar</span></button>
-      <button id="btnStop" class="warn" disabled title="Detener">🔇 <span class="text">Detener</span></button>
+    <!-- <button id="btnStop" class="warn" disabled title="Detener">🔇 <span class="text">Detener</span></button> -->
       <button id="btnHumidity" class="accent" title="Obtener Humedad">💧 <span class="text">Humedad</span></button>
     </div>
 
@@ -290,27 +290,33 @@
       btnSend.disabled=false;
     }
   });
-
-    // Botón de humedad
-  document.getElementById('btnHumidity').addEventListener('click', async () => {
-    try {
-      toastShow("Midiendo humedad...");
-      const response = await fetch(`${SERVER}/get_humidity`);
-      if (!response.ok) throw new Error("Error al medir");
-      
-      const data = await response.json();
-      toastShow(`Humedad: ${data.humidity}%`, 2000);
-      
-      // Reproducir audio de respuesta
-      audio.src = SERVER + "/play?t=" + Date.now();
-      try { await audio.play(); btnStop.disabled = false; } catch(_) {}
-      
-    } catch (err) {
-      toastShow("Error al medir humedad", 1500);
-      console.error(err);
-    }
-  });
-
+// Botón de humedad
+document.getElementById('btnHumidity').addEventListener('click', async () => {
+  const btn = document.getElementById('btnHumidity');
+  btn.disabled = true;
+  
+  try {
+    toastShow("Midiendo humedad...");
+    
+    const response = await fetch(`${SERVER}/get_humidity`);
+    if (!response.ok) throw new Error("Error al medir");
+    
+    const data = await response.json();
+    if (data.error) throw new Error(data.error);
+    
+    toastShow(`Humedad: ${data.humidity}% - ${data.message}`, 3000);
+    
+    // Reproducir audio
+    audio.src = `${SERVER}/play?t=${Date.now()}`;
+    audio.play();
+    
+  } catch (err) {
+    toastShow(err.message || "Error al medir humedad", 2500);
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+  }
+});
 
   // Detener: corta en servidor y en el <audio>
   btnStop.addEventListener('click', async ()=>{

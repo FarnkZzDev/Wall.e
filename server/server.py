@@ -216,37 +216,36 @@ async def play():
 @app.get("/get_humidity")
 async def get_humidity():
     try:
-        # Simulamos lectura del ESP32 (en producción sería una llamada HTTP al ESP)
-        # humidity = random.randint(10, 90)  # Solo para prueba
-        humidity = await get_humidity_from_esp()  # Implementar esta función
+        humidity = await get_humidity_from_esp()
         
-        # Evaluamos el nivel de humedad
-        if humidity < 20:
-            message = f"La humedad relativa del suelo es {humidity}%. ¡Peligro! El suelo está peligrosamente seco. Riega de inmediato."
-        elif humidity < 50:
-            message = f"La humedad relativa del suelo es {humidity}%. El suelo está seco, debes regar pronto."
-        elif humidity < 80:
-            message = f"La humedad relativa del suelo es {humidity}%. El cultivo tiene humedad óptima."
-        else:
-            message = f"La humedad relativa del suelo es {humidity}%. ¡Alerta! Suelo saturado. Deja de regar hasta establecer una humedad adecuada."
+        if humidity is None:
+            return {"error": "No se pudo conectar al sensor"}
         
-        # Generamos audio de respuesta
-        wav_out = tts_local_wav(message)
+        return await generate_humidity_response(humidity)
         
-        # Actualizamos el playback
-        playback["id"] = str(uuid.uuid4())
-        last_audio_id = playback["id"]
-        playback["wav"] = wav_out
-        playback["cancel"] = asyncio.Event()
-        
-        return {
-            "humidity": humidity,
-            "message": message,
-            "audio_id": playback["id"]
-        }
     except Exception as e:
-        logging.error(f"Error en get_humidity: {e}")
+        logging.error(f"Error en get_humidity: {str(e)}")
         return {"error": str(e)}
+
+@app.get("/humidity_audio")
+async def humidity_audio(h: int):
+    try:
+        if h < 20:
+            message = f"Emergencia! Humedad {h}%. Suelo extremadamente seco. Riega inmediatamente."
+        elif h < 50:
+            message = f"Humedad {h}%. El suelo necesita riego pronto."
+        elif h < 80:
+            message = f"Humedad {h}%. Nivel óptimo de humedad."
+        else:
+            message = f"Alerta! Humedad {h}%. Suelo sobresaturado."
+        
+        wav_out = tts_local_wav(message)
+        return Response(content=wav_out, media_type="audio/wav")
+        
+    except Exception as e:
+        logging.error(f"Error en humidity_audio: {str(e)}")
+        return Response(status_code=500)
+
 
 async def get_humidity_from_esp():
     try:

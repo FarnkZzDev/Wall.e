@@ -132,7 +132,14 @@ python -m venv .venv
 ### Paso 5: Instalar dependencias
 ```powershell
 pip install -r requirements.txt
-pip install python-multipart pytz faster-whisper SpeechRecognition
+```
+Si se necesitacen hacer manualmente:
+```
+pip install python-multipart
+pytz 
+faster-whisper
+SpeechRecognition
+aiohttp
 ```
 
 ---
