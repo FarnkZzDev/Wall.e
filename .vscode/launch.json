@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "▶ FastAPI (uvicorn) - server.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/.venv/bin/uvicorn",
+      "args": ["server:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/server/.env"
+    }
+  ]
+}

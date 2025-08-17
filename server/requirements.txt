@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydub
+pyttsx3
+requests
+faster-whisper
+SpeechRecognition
+python-dotenv
+aiohttp
