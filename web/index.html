@@ -214,7 +214,7 @@
     const ok = await ensureMicOnce(); if(!ok) return;
 
     const mime = pickMime();
-    if (!mime){ alert("Tu navegador no soporta MediaRecorder compatible."); return; }
+    if (!mime){ alert("Tu navegador no soporta MediaRecorder compatible.."); return; }
 
     stopPreviewAudio(); clearTimers(); setProgress(0);
     try{ mediaRec = new MediaRecorder(mediaStream, { mimeType:mime }); }

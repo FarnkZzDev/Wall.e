@@ -10,6 +10,7 @@
       "cwd": "${workspaceFolder}/server",
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/server/.env"
+      
     }
   ]
 }

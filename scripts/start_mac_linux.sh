@@ -8,7 +8,7 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
   exit 1
 fi
 
-# 2) venv
+# 2) .venv
 if [ ! -d ".venv" ]; then
   echo "Creando entorno virtual..."
   python3 -m venv .venv

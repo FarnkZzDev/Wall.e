@@ -13,6 +13,7 @@ if not exist .venv (
   echo Creando entorno virtual...
   py -3 -m venv .venv
 )
+
 call .venv\Scripts\activate
 
 REM 3) Dependencias
