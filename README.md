@@ -12,7 +12,7 @@
 ## Instalación paso a paso
 
 ### Paso 1: Instalar FFmpeg
-1. Descarga desde [FFmpeg Builds](https://www.gyan.dev/ffmpeg/builds/) el archivo ffmpeg-git-full.7z.  
+1. Descarga desde [FFmpeg Builds](https://www.gyan.dev/ffmpeg/builds/) el archivo `ffmpeg-git-full.7z`.  
 2. Extrae en una carpeta ("C:\ffmpeg\").  
 3. Agrega la ruta `bin` al **Path** de las variables de entorno.
 
