@@ -104,8 +104,8 @@
       <button id="btnRecord" class="primary" title="Mantener para grabar">🎤 <span class="text">Mantener</span></button>
       <button id="btnPlay" class="accent" disabled title="Escuchar">▶️ <span class="text">Escuchar</span></button>
       <button id="btnSend" class="accent" disabled title="Enviar">📤 <span class="text">Enviar</span></button>
-    <!-- <button id="btnStop" class="warn" disabled title="Detener">🔇 <span class="text">Detener</span></button> -->
-      <button id="btnHumidity" class="accent" title="Obtener Humedad">💧 <span class="text">Humedad</span></button>
+    <!-- <button id="btnStop" class="warn" disabled title="Detener">🔇 <span class="text">Detener</span></button>
+      <button id="btnHumidity" class="accent" title="Obtener Humedad">💧 <span class="text">Humedad</span></button> -->
     </div>
 
     <div class="preview" id="preview" hidden>
@@ -298,7 +298,7 @@ document.getElementById('btnHumidity').addEventListener('click', async () => {
   try {
     toastShow("Midiendo humedad...");
     
-    const response = await fetch(`${SERVER}/get_humidity`);
+    const response = await fetch(`${SERVER}/humidity`);
     if (!response.ok) throw new Error("Error al medir");
     
     const data = await response.json();

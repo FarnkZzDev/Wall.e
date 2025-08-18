@@ -213,66 +213,83 @@ async def play():
     return StreamingResponse(streamer(), media_type="audio/wav")
 
 # === Sensor de Humedad ===
-@app.get("/get_humidity")
-async def get_humidity():
-    try:
-        humidity = await get_humidity_from_esp()
-        
-        if humidity is None:
-            return {"error": "No se pudo conectar al sensor"}
-        
-        return await generate_humidity_response(humidity)
-        
-    except Exception as e:
-        logging.error(f"Error en get_humidity: {str(e)}")
-        return {"error": str(e)}
-
-@app.get("/humidity_audio")
+@app.get("/humidity")
 async def humidity_audio(h: int):
     try:
-        if h < 20:
-            message = f"Emergencia! Humedad {h}%. Suelo extremadamente seco. Riega inmediatamente."
-        elif h < 50:
-            message = f"Humedad {h}%. El suelo necesita riego pronto."
-        elif h < 80:
-            message = f"Humedad {h}%. Nivel óptimo de humedad."
-        else:
-            message = f"Alerta! Humedad {h}%. Suelo sobresaturado."
-        
-        wav_out = tts_local_wav(message)
-        return Response(content=wav_out, media_type="audio/wav")
-        
+        return await generate_humidity_response(h)
     except Exception as e:
         logging.error(f"Error en humidity_audio: {str(e)}")
         return Response(status_code=500)
 
+async def generate_humidity_response(humidity: int):
+    """Genera la respuesta JSON y audio para humedad"""
+    if humidity < 20:
+        message = f"Alerta! Humedad {humidity}%. Suelo muy seco. Riega inmediatamente."
+    elif humidity < 50:
+        message = f"Humedad {humidity}%. El suelo está seco, considera regar."
+    elif humidity < 80:
+        message = f"Humedad {humidity}%. Nivel óptimo de humedad."
+    else:
+        message = f"Alerta! Humedad {humidity}%. Suelo saturado. No riegues."
+    
+    wav_out = tts_local_wav(message)
+    
+    # Para /get_humidity (web)
+    if aiohttp.request.url.path == "/get_humidity":
+        playback["id"] = str(uuid.uuid4())
+        last_audio_id = playback["id"]
+        playback["wav"] = wav_out
+        playback["cancel"] = asyncio.Event()
+        
+        return {
+            "humidity": humidity,
+            "message": message,
+            "audio_id": playback["id"]
+        }
+    # Para /humidity_audio (ESP32)
+    else:
+        return Response(content=wav_out, media_type="audio/wav")
+    
+@app.get("/get_humidity")
+async def get_humidity():
+    """Endpoint que la interfaz web llama para obtener humedad"""
+    try:
+        # 1. Obtener humedad del ESP32
+        humidity = await get_humidity_from_esp()
+        
+        if humidity is None:
+            return {"error": "No se pudo obtener la humedad del sensor"}
+        
+        # 2. Generar respuesta con mensaje y audio
+        return await generate_humidity_response(humidity)
+        
+    except Exception as e:
+        logging.error(f"Error en get_humidity: {str(e)}")
+        return {"error": "Error al procesar la solicitud"}
+    
 
 async def get_humidity_from_esp():
     try:
         # Configuración - reemplaza con la IP de tu ESP32
-        ESP32_IP = "192.168.18.42"  # Cambia por la IP local de tu ESP32
+        ESP32_IP = "192.168.18.42"  # Ajusta esta IP
         ESP32_PORT = 80
         TIMEOUT = 5  # segundos
         
         url = f"http://{ESP32_IP}:{ESP32_PORT}/humidity"
         
         async with aiohttp.ClientSession() as session:
-            try:
-                async with session.get(url, timeout=TIMEOUT) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        return int(data["humidity"])
-                    else:
-                        logging.error(f"Error al obtener humedad. Código: {response.status}")
-                        return None
-            except asyncio.TimeoutError:
-                logging.error("Timeout al conectar con ESP32")
-                return None
-            except Exception as e:
-                logging.error(f"Error en get_humidity_from_esp: {str(e)}")
-                return None
+            async with session.get(url, timeout=TIMEOUT) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return int(data["humidity"])
+                else:
+                    logging.error(f"Error al obtener humedad. Código: {response.status}")
+                    return None
+    except asyncio.TimeoutError:
+        logging.error("Timeout al conectar con ESP32")
+        return None
     except Exception as e:
-        logging.error(f"Error general en get_humidity_from_esp: {str(e)}")
+        logging.error(f"Error en get_humidity_from_esp: {str(e)}")
         return None
 
 # === Corte de reproducción ===
